@@ -225,10 +225,31 @@ auth.onAuthStateChanged(user => {
 
 });
 
+      const provider = new firebase.auth.GoogleAuthProvider();
+
+// Redirect ile giriş başlat
+document.getElementById("google-login-btn").addEventListener("click", () => {
+  auth.signInWithRedirect(provider);
+});
+
+// Geri dönen kullanıcıyı yakala
+auth.getRedirectResult()
+  .then((result) => {
+    if (result.user) {
+      console.log("Giriş başarılı:", result.user);
+      alert("Hoşgeldin, " + result.user.displayName);
+    }
+  })
+  .catch((error) => {
+    console.error("Hata:", error);
+  });
+
+
 
 
 
 </script>
   </body>
 </html>
+
 
