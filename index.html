@@ -7,6 +7,9 @@
     <link rel="stylesheet" href="style.css" />
     <link rel="manifest" href="/manifest.json" />
 
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1813888095277705"
      crossorigin="anonymous"></script>
 
@@ -141,8 +144,91 @@
         En güncel ehliyet sınavları, deneme testleri ve konu anlatımları ile
         sınava <span>hazır ol!</span>
       </p>
+<div id="authBox">
+  <button id="loginBtn">Google ile Giriş</button>
+  <button id="logoutBtn" style="display:none;">Çıkış Yap</button>
 
+  <p id="userInfo"></p>
+</div>
       <a href="katagoriler.html" class="start-btn">Hemen Başla</a>
     </main>
+
+       <script>
+  const googleBtn = document.getElementById("google-login-btn");
+
+  googleBtn.addEventListener("click", () => {
+    const provider = new firebase.auth.GoogleAuthProvider();
+
+    auth.signInWithPopup(provider)
+      .then((result) => {
+        const user = result.user;
+        console.log("Kullanıcı girişi başarılı:", user);
+        alert("Hoşgeldin, " + user.displayName);
+        // Burada kullanıcıyı test/reklam/premium sistemi ile bağlayacağız
+      })
+      .catch((error) => {
+        console.error("Hata:", error);
+        alert("Giriş başarısız!");
+      });
+  });
+</script>
+
+
+    <script>
+const firebaseConfig = {
+  apiKey: "AIzaSyDG61MR_F6TP50Wr40KG8tIP93f4y-wRmY",
+  authDomain: "sahinehliyet-app.firebaseapp.com",
+  projectId: "sahinehliyet-app",
+  storageBucket: "sahinehliyet-app.firebasestorage.app",
+  messagingSenderId: "234085464102",
+  appId: "1:234085464102:web:8e9761997fbeec319b8ee7",
+  measurementId: "G-QQZFK8EZD4"
+};
+
+
+firebase.initializeApp(firebaseConfig);
+
+const auth = firebase.auth();
+
+const loginBtn = document.getElementById("loginBtn");
+const logoutBtn = document.getElementById("logoutBtn");
+const userInfo = document.getElementById("userInfo");
+
+const provider = new firebase.auth.GoogleAuthProvider();
+
+loginBtn.onclick = () => {
+  auth.signInWithPopup(provider);
+};
+
+logoutBtn.onclick = () => {
+  auth.signOut();
+};
+
+auth.onAuthStateChanged(user => {
+
+  if(user){
+
+    loginBtn.style.display = "none";
+    logoutBtn.style.display = "inline-block";
+
+    userInfo.innerText =
+      "Hoşgeldin: " + user.displayName;
+
+  } else {
+
+    loginBtn.style.display = "inline-block";
+    logoutBtn.style.display = "none";
+
+    userInfo.innerText = "Giriş yapılmadı";
+
+  }
+
+});
+
+
+
+
+</script>
   </body>
 </html>
+
