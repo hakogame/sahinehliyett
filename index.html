@@ -315,12 +315,24 @@ function register(){
         return;
     }
 
-    auth.createUserWithEmailAndPassword(email,pass)
-    .then(user=>{
+   import { updateProfile } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-        return user.user.updateProfile({
-            displayName:name
-        });
+createUserWithEmailAndPassword(auth, email, password)
+.then((userCredential) => {
+
+  const user = userCredential.user;
+
+  const username = document.getElementById("username").value;
+
+  // 🔹 Firebase'e kullanıcı adını kaydet
+  updateProfile(user, {
+    displayName: username
+  });
+
+  alert("Kayıt başarılı");
+
+});
+
 
     })
     .then(()=>{
@@ -427,6 +439,7 @@ function resetPass(){
 </script>
   </body>
 </html>
+
 
 
 
