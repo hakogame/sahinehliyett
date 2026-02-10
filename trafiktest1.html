@@ -582,18 +582,18 @@
           }
           function showResult() {
 
-            // Sadece test bitince görev artır
-let d = JSON.parse(localStorage.getItem("dailyTasks"));
+let d = getDailyTasks();
 
-function completeTest(){
+if(!window.testCounted){
 
-  let d = JSON.parse(localStorage.getItem("dailyTasks")) || {};
+  d.tests++;
 
-  d.tests = (d.tests || 0) + 1;
+  saveDailyTasks(d);
 
-  localStorage.setItem("dailyTasks", JSON.stringify(d));
+  window.testCounted = true;
 
 }
+
 
 
 
@@ -742,8 +742,45 @@ function exitTest() {
 
           loadQuestion();
         </script>
+
+          <script>
+
+function getToday(){
+  return new Date().toLocaleDateString("tr-TR");
+}
+
+function getDailyTasks(){
+
+  let d = JSON.parse(localStorage.getItem("dailyTasks"));
+  let today = getToday();
+
+  if(!d || d.date !== today){
+
+    d = {
+      date: today,
+      tests: 0,
+      konu: false,
+      deneme: 0,
+      reward1:false,
+      reward2:false,
+      reward3:false
+    };
+
+    localStorage.setItem("dailyTasks",JSON.stringify(d));
+  }
+
+  return d;
+}
+
+function saveDailyTasks(d){
+  localStorage.setItem("dailyTasks",JSON.stringify(d));
+}
+
+</script>
+
       </body>
     </html>
   </head>
 </html>
+
 
