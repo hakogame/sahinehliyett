@@ -585,13 +585,14 @@
             // Sadece test bitince görev artır
 let d = JSON.parse(localStorage.getItem("dailyTasks"));
 
-if(d && !window.testCounted){
+function completeTest(){
 
-  d.tests++;
+  let d = JSON.parse(localStorage.getItem("dailyTasks")) || {};
+
+  d.tests = (d.tests || 0) + 1;
 
   localStorage.setItem("dailyTasks", JSON.stringify(d));
 
-  window.testCounted = true; // tekrar saymasın
 }
 
 
@@ -615,7 +616,7 @@ if(d && !window.testCounted){
 
             const total = questions.length;
             const successRate = Math.round((correct / total) * 100);
-
+completeTest();
             document.querySelector(".quiz-container").innerHTML = `
     <div class="card" style="text-align:center">
       <h2>Test Sonucu</h2>
@@ -745,3 +746,4 @@ function exitTest() {
     </html>
   </head>
 </html>
+
