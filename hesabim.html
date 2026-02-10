@@ -425,6 +425,7 @@
       <div class="card">
         <div id="nicknameText" class="nickname" onclick="openNickname()"></div>
       </div>
+<span id="nicknameText"></span>
 
       <div id="nicknameModal" class="modal">
         <div class="modal-box">
@@ -706,5 +707,45 @@ let user = JSON.parse(localStorage.getItem("user")) || {
       loadBadges();
       updateLevel();
     </script>
+
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+
+<script>
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDG61MR_F6TP50Wr40KG8tIP93f4y-wRmY",
+  authDomain: "sahinehliyet-app.firebaseapp.com",
+  projectId: "sahinehliyet-app",
+  storageBucket: "sahinehliyet-app.firebasestorage.app",
+  messagingSenderId: "234085464102",
+  appId: "1:234085464102:web:8e9761997fbeec319b8ee7",
+  measurementId: "G-QQZFK8EZD4"
+};
+
+firebase.initializeApp(firebaseConfig);
+
+const auth = firebase.auth();
+
+auth.onAuthStateChanged(user=>{
+
+  if(user){
+
+    let name = user.displayName || localStorage.getItem("username") || "Kullanıcı";
+
+    document.getElementById("nicknameText").innerText = name;
+
+  }
+  else{
+
+    location.href="index.html";
+
+  }
+
+});
+
+</script>
+
   </body>
 </html>
+
