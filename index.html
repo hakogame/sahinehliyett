@@ -258,26 +258,6 @@ small{
 
     </main>
 
-       <script>
-  const googleBtn = document.getElementById("google-login-btn");
-
-  googleBtn.addEventListener("click", () => {
-    const provider = new firebase.auth.GoogleAuthProvider();
-
-    auth.signInWithPopup(provider)
-      .then((result) => {
-        const user = result.user;
-        console.log("Kullanıcı girişi başarılı:", user);
-        alert("Hoşgeldin, " + user.displayName);
-        // Burada kullanıcıyı test/reklam/premium sistemi ile bağlayacağız
-      })
-      .catch((error) => {
-        console.error("Hata:", error);
-        alert("Giriş başarısız!");
-      });
-  });
-</script>
-
 
     <script>
 const firebaseConfig = {
@@ -403,6 +383,7 @@ auth.onAuthStateChanged(user=>{
 </script>
   </body>
 </html>
+
 
 
 
