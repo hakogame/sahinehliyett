@@ -760,8 +760,22 @@
 </div>
 
     <script>
-document.getElementById("user").innerText =
-"Hoşgeldin " + localStorage.getItem("username");
+firebase.auth().onAuthStateChanged(user=>{
+
+  if(user){
+
+    let name = user.displayName;
+
+    if(!name){
+      name = localStorage.getItem("username") || "Kullanıcı";
+    }
+
+    document.getElementById("userName").innerText =
+    "Hoşgeldin " + name;
+
+  }
+
+});
 
 (function initStorage(){
 
@@ -1034,4 +1048,5 @@ function closeXPPopup(){
 
   </body>
 </html>
+
 
