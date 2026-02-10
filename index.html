@@ -133,6 +133,68 @@
         max-width: 280px;
       }
     }
+
+    #loginBox{
+    background:#fff;
+    width:100%;
+    max-width:380px;
+    padding:25px;
+    border-radius:15px;
+    box-shadow:0 0 15px rgba(0,0,0,0.3);
+    text-align:center;
+}
+
+h2{
+    margin-bottom:20px;
+}
+
+input{
+    width:100%;
+    padding:12px;
+    margin:8px 0;
+    border-radius:8px;
+    border:1px solid #ccc;
+    font-size:16px;
+}
+
+button{
+    width:100%;
+    padding:12px;
+    margin-top:10px;
+    border:none;
+    border-radius:8px;
+    font-size:16px;
+    cursor:pointer;
+}
+
+.btn-google{
+    background:#db4437;
+    color:white;
+}
+
+.btn-login{
+    background:#1e88e5;
+    color:white;
+}
+
+.btn-register{
+    background:#43a047;
+    color:white;
+}
+
+.btn-logout{
+    background:#555;
+    color:white;
+}
+
+#userPanel{
+    display:none;
+}
+
+small{
+    color:red;
+}
+
   </style>
   <body>
     <div class="background"></div>
@@ -146,17 +208,54 @@
       </p>
 <div id="authBox" style="margin:20px; text-align:center;">
 
-  <button id="loginBtn">Google ile Giriş</button>
+  <div id="loginBox">
 
-  <button id="logoutBtn" style="display:none;">
-    Çıkış Yap
-  </button>
+<!-- GİRİŞ PANELİ -->
+<div id="authPanel">
 
-  <p id="userInfo"></p>
+    <h2>Giriş Yap / Kayıt Ol</h2>
+
+    <button class="btn-google" id="googleBtn">
+        Google ile Giriş
+    </button>
+
+    <hr>
+
+    <input type="email" id="email" placeholder="E-mail">
+    <input type="password" id="password" placeholder="Şifre">
+
+    <button class="btn-login" id="loginBtn">
+        Giriş Yap
+    </button>
+
+    <button class="btn-register" id="registerBtn">
+        Kayıt Ol
+    </button>
+
+    <small id="errorMsg"></small>
 
 </div>
 
-      <a href="katagoriler.html" class="start-btn">Hemen Başla</a>
+
+<!-- KULLANICI PANELİ -->
+<div id="userPanel">
+
+    <h2>Hoşgeldin 👋</h2>
+
+    <p id="userName"></p>
+    <p id="userEmail"></p>
+
+    <button class="btn-logout" id="logoutBtn">
+        Çıkış Yap
+    </button>
+
+</div>
+
+</div>
+
+
+
+
     </main>
 
        <script>
@@ -192,47 +291,108 @@ const firebaseConfig = {
 };
 
 
-// Firebase başlat
 firebase.initializeApp(firebaseConfig);
 
 const auth = firebase.auth();
+
 const provider = new firebase.auth.GoogleAuthProvider();
 
+
+
+// ELEMENTLER
+const googleBtn = document.getElementById("googleBtn");
 const loginBtn = document.getElementById("loginBtn");
+const registerBtn = document.getElementById("registerBtn");
 const logoutBtn = document.getElementById("logoutBtn");
-const userInfo = document.getElementById("userInfo");
 
-// Giriş
-loginBtn.onclick = () => {
-  auth.signInWithPopup(provider);
+const emailInput = document.getElementById("email");
+const passInput = document.getElementById("password");
+
+const authPanel = document.getElementById("authPanel");
+const userPanel = document.getElementById("userPanel");
+
+const userName = document.getElementById("userName");
+const userEmail = document.getElementById("userEmail");
+
+const errorMsg = document.getElementById("errorMsg");
+
+
+
+// GOOGLE LOGIN
+googleBtn.onclick = ()=>{
+
+    auth.signInWithPopup(provider)
+    .catch(err=>{
+        errorMsg.innerText = err.message;
+    });
+
 };
 
-// Çıkış
-logoutBtn.onclick = () => {
-  auth.signOut();
+
+
+// EMAIL LOGIN
+loginBtn.onclick = ()=>{
+
+    const email = emailInput.value;
+    const pass = passInput.value;
+
+    auth.signInWithEmailAndPassword(email,pass)
+    .catch(err=>{
+        errorMsg.innerText = err.message;
+    });
+
 };
 
-// Oturum kontrol
-auth.onAuthStateChanged(user => {
 
-  if(user){
 
-    loginBtn.style.display = "none";
-    logoutBtn.style.display = "inline-block";
+// REGISTER
+registerBtn.onclick = ()=>{
 
-    userInfo.innerText =
-      "Hoşgeldin: " + user.displayName;
+    const email = emailInput.value;
+    const pass = passInput.value;
 
-  } else {
+    auth.createUserWithEmailAndPassword(email,pass)
+    .catch(err=>{
+        errorMsg.innerText = err.message;
+    });
 
-    loginBtn.style.display = "inline-block";
-    logoutBtn.style.display = "none";
+};
 
-    userInfo.innerText = "Giriş yapılmadı";
 
-  }
+
+// LOGOUT
+logoutBtn.onclick = ()=>{
+
+    auth.signOut();
+
+};
+
+
+
+// OTURUM KONTROL
+auth.onAuthStateChanged(user=>{
+
+    if(user){
+
+        authPanel.style.display="none";
+        userPanel.style.display="block";
+
+        userName.innerText = user.displayName || "Kullanıcı";
+        userEmail.innerText = user.email;
+
+    }else{
+
+        authPanel.style.display="block";
+        userPanel.style.display="none";
+
+        emailInput.value="";
+        passInput.value="";
+        errorMsg.innerText="";
+
+    }
 
 });
+
 
 
 
@@ -243,6 +403,7 @@ auth.onAuthStateChanged(user => {
 </script>
   </body>
 </html>
+
 
 
 
