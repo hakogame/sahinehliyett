@@ -144,12 +144,18 @@
         En güncel ehliyet sınavları, deneme testleri ve konu anlatımları ile
         sınava <span>hazır ol!</span>
       </p>
-<div id="authBox">
+<div id="authBox" style="margin:20px; text-align:center;">
+
   <button id="loginBtn">Google ile Giriş</button>
-  <button id="logoutBtn" style="display:none;">Çıkış Yap</button>
+
+  <button id="logoutBtn" style="display:none;">
+    Çıkış Yap
+  </button>
 
   <p id="userInfo"></p>
+
 </div>
+
       <a href="katagoriler.html" class="start-btn">Hemen Başla</a>
     </main>
 
@@ -186,24 +192,27 @@ const firebaseConfig = {
 };
 
 
+// Firebase başlat
 firebase.initializeApp(firebaseConfig);
 
 const auth = firebase.auth();
+const provider = new firebase.auth.GoogleAuthProvider();
 
 const loginBtn = document.getElementById("loginBtn");
 const logoutBtn = document.getElementById("logoutBtn");
 const userInfo = document.getElementById("userInfo");
 
-const provider = new firebase.auth.GoogleAuthProvider();
-
+// Giriş
 loginBtn.onclick = () => {
   auth.signInWithPopup(provider);
 };
 
+// Çıkış
 logoutBtn.onclick = () => {
   auth.signOut();
 };
 
+// Oturum kontrol
 auth.onAuthStateChanged(user => {
 
   if(user){
@@ -225,24 +234,7 @@ auth.onAuthStateChanged(user => {
 
 });
 
-      const provider = new firebase.auth.GoogleAuthProvider();
 
-// Redirect ile giriş başlat
-document.getElementById("google-login-btn").addEventListener("click", () => {
-  auth.signInWithRedirect(provider);
-});
-
-// Geri dönen kullanıcıyı yakala
-auth.getRedirectResult()
-  .then((result) => {
-    if (result.user) {
-      console.log("Giriş başarılı:", result.user);
-      alert("Hoşgeldin, " + result.user.displayName);
-    }
-  })
-  .catch((error) => {
-    console.error("Hata:", error);
-  });
 
 
 
@@ -251,5 +243,6 @@ auth.getRedirectResult()
 </script>
   </body>
 </html>
+
 
 
