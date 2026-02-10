@@ -530,7 +530,7 @@
     </header>
 
     <main class="content">
-      <h3>Şahin Ehliyet'e Hoşgeldin!</h3>
+      <h3>Şahin Ehliyet'e Hoşgeldin!<h2 id="user"></h2></h3>
 
 
    <div class="task-bar">
@@ -760,7 +760,8 @@
 </div>
 
     <script>
-
+document.getElementById("user").innerText =
+"Hoşgeldin " + localStorage.getItem("username");
 
 (function initStorage(){
 
@@ -1033,3 +1034,4 @@ function closeXPPopup(){
 
   </body>
 </html>
+
