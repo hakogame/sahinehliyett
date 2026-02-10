@@ -218,6 +218,7 @@ button:hover{
     <button class="google" onclick="googleLogin()">Google ile Giriş</button>
 
     <div class="link" onclick="showRegister()">Hesabın yok mu? Kayıt Ol</div>
+<div class="link" onclick="resetPass()">Şifremi Unuttum</div>
 
     <div id="msg"></div>
 
@@ -267,30 +268,36 @@ const auth = firebase.auth();
 
 function login(){
 
-    let email = loginEmail.value;
-    let pass = loginPass.value;
+  let email = loginEmail.value;
+  let pass  = loginPass.value;
 
-    auth.signInWithEmailAndPassword(email,pass)
-    .then(user=>{
+  auth.signInWithEmailAndPassword(email, pass)
+  .then(user=>{
 
-        let name = user.user.displayName || "Kullanıcı";
+    let name = user.user.displayName || "Kullanıcı";
+    localStorage.setItem("username", name);
 
-        localStorage.setItem("username",name);
+    window.location.href="home.html";
 
-        window.location.href="katagoriler.html";
+  })
+  .catch(err=>{
 
-    })
-    .catch(err=>{
+    msg.style.color="red";
 
-        if(err.code==="auth/user-not-found"){
-            msg.innerText="Bu mail ile kayıtlı hesap bulunamadı.";
-        }else if(err.code==="auth/wrong-password"){
-            msg.innerText="Şifre yanlış.";
-        }else{
-            msg.innerText=err.message;
-        }
+    if(err.code==="auth/user-not-found"){
+      msg.innerText="Bu e-posta ile kayıtlı hesap bulunamadı.";
+    }
+    else if(err.code==="auth/wrong-password"){
+      msg.innerText="Şifre yanlış.";
+    }
+    else if(err.code==="auth/invalid-email"){
+      msg.innerText="E-posta adresi hatalı.";
+    }
+    else{
+      msg.innerText="Giriş yapılamadı. Tekrar deneyin.";
+    }
 
-    });
+  });
 
 }
 
@@ -323,7 +330,21 @@ function register(){
 
     })
     .catch(err=>{
-        msg2.innerText=err.message;
+
+  msg2.style.color="red";
+
+  if(err.code==="auth/email-already-in-use"){
+    msg2.innerText="Bu e-posta adresi zaten kayıtlı.";
+  }
+  else if(err.code==="auth/weak-password"){
+    msg2.innerText="Şifre en az 6 karakter olmalıdır.";
+  }
+  else if(err.code==="auth/invalid-email"){
+    msg2.innerText="Geçersiz e-posta adresi.";
+  }
+  else{
+    msg2.innerText="Kayıt sırasında hata oluştu.";
+  }
     });
 
 }
@@ -372,6 +393,30 @@ auth.onAuthStateChanged(user=>{
 
 });
 
+function resetPass(){
+
+  let email = loginEmail.value;
+
+  if(!email){
+    msg.innerText="Lütfen önce e-posta adresinizi girin.";
+    return;
+  }
+
+  auth.sendPasswordResetEmail(email)
+  .then(()=>{
+
+    msg.style.color="green";
+    msg.innerText="Şifre sıfırlama bağlantısı mailinize gönderildi.";
+
+  })
+  .catch(()=>{
+
+    msg.style.color="red";
+    msg.innerText="Bu e-posta sistemde bulunamadı.";
+
+  });
+
+}
 
 
 
@@ -382,6 +427,7 @@ auth.onAuthStateChanged(user=>{
 </script>
   </body>
 </html>
+
 
 
 
