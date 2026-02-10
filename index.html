@@ -134,26 +134,24 @@
       }
     }
 
-    #loginBox{
+.card{
     background:#fff;
-    width:100%;
+    width:90%;
     max-width:380px;
     padding:25px;
     border-radius:15px;
-    box-shadow:0 0 15px rgba(0,0,0,0.3);
+    box-shadow:0 10px 25px rgba(0,0,0,0.2);
     text-align:center;
 }
 
-h2{
-    margin-bottom:20px;
-}
+h2{margin-bottom:20px;}
 
 input{
     width:100%;
     padding:12px;
     margin:8px 0;
-    border-radius:8px;
     border:1px solid #ccc;
+    border-radius:8px;
     font-size:16px;
 }
 
@@ -163,36 +161,35 @@ button{
     margin-top:10px;
     border:none;
     border-radius:8px;
+    background:#2a5298;
+    color:white;
     font-size:16px;
     cursor:pointer;
 }
 
-.btn-google{
+button:hover{
+    opacity:0.9;
+}
+
+.google{
     background:#db4437;
-    color:white;
 }
 
-.btn-login{
-    background:#1e88e5;
-    color:white;
+.link{
+    margin-top:10px;
+    color:#2a5298;
+    cursor:pointer;
+    font-size:14px;
 }
 
-.btn-register{
-    background:#43a047;
-    color:white;
-}
-
-.btn-logout{
-    background:#555;
-    color:white;
-}
-
-#userPanel{
-    display:none;
-}
-
-small{
+#msg{
+    margin-top:10px;
+    font-size:14px;
     color:red;
+}
+
+.hidden{
+    display:none;
 }
 
   </style>
@@ -208,51 +205,41 @@ small{
       </p>
 <div id="authBox" style="margin:20px; text-align:center;">
 
-  <div id="loginBox">
+ <!-- LOGIN -->
+<div class="card" id="loginCard">
 
-<!-- GİRİŞ PANELİ -->
-<div id="authPanel">
+    <h2>Giriş Yap</h2>
 
-    <h2>Giriş Yap / Kayıt Ol</h2>
+    <input type="email" id="loginEmail" placeholder="E-mail">
+    <input type="password" id="loginPass" placeholder="Şifre">
 
-    <button class="btn-google" id="googleBtn">
-        Google ile Giriş
-    </button>
+    <button onclick="login()">Giriş Yap</button>
 
-    <hr>
+    <button class="google" onclick="googleLogin()">Google ile Giriş</button>
 
-    <input type="email" id="email" placeholder="E-mail">
-    <input type="password" id="password" placeholder="Şifre">
+    <div class="link" onclick="showRegister()">Hesabın yok mu? Kayıt Ol</div>
 
-    <button class="btn-login" id="loginBtn">
-        Giriş Yap
-    </button>
-
-    <button class="btn-register" id="registerBtn">
-        Kayıt Ol
-    </button>
-
-    <small id="errorMsg"></small>
+    <div id="msg"></div>
 
 </div>
 
 
-<!-- KULLANICI PANELİ -->
-<div id="userPanel">
+<!-- REGISTER -->
+<div class="card hidden" id="registerCard">
 
-    <h2>Hoşgeldin 👋</h2>
+    <h2>Kayıt Ol</h2>
 
-    <p id="userName"></p>
-    <p id="userEmail"></p>
+    <input type="text" id="regName" placeholder="Kullanıcı Adı">
+    <input type="email" id="regEmail" placeholder="E-mail">
+    <input type="password" id="regPass" placeholder="Şifre">
 
-    <button class="btn-logout" id="logoutBtn">
-        Çıkış Yap
-    </button>
+    <button onclick="register()">Kayıt Ol</button>
+
+    <div class="link" onclick="showLogin()">Zaten hesabım var</div>
+
+    <div id="msg2"></div>
 
 </div>
-
-</div>
-
 
 
 
@@ -275,100 +262,112 @@ firebase.initializeApp(firebaseConfig);
 
 const auth = firebase.auth();
 
-const provider = new firebase.auth.GoogleAuthProvider();
 
+/* LOGIN */
 
+function login(){
 
-// ELEMENTLER
-const googleBtn = document.getElementById("googleBtn");
-const loginBtn = document.getElementById("loginBtn");
-const registerBtn = document.getElementById("registerBtn");
-const logoutBtn = document.getElementById("logoutBtn");
-
-const emailInput = document.getElementById("email");
-const passInput = document.getElementById("password");
-
-const authPanel = document.getElementById("authPanel");
-const userPanel = document.getElementById("userPanel");
-
-const userName = document.getElementById("userName");
-const userEmail = document.getElementById("userEmail");
-
-const errorMsg = document.getElementById("errorMsg");
-
-
-
-// GOOGLE LOGIN
-googleBtn.onclick = ()=>{
-
-    auth.signInWithPopup(provider)
-    .catch(err=>{
-        errorMsg.innerText = err.message;
-    });
-
-};
-
-
-
-// EMAIL LOGIN
-loginBtn.onclick = ()=>{
-
-    const email = emailInput.value;
-    const pass = passInput.value;
+    let email = loginEmail.value;
+    let pass = loginPass.value;
 
     auth.signInWithEmailAndPassword(email,pass)
+    .then(user=>{
+
+        let name = user.user.displayName || "Kullanıcı";
+
+        localStorage.setItem("username",name);
+
+        window.location.href="home.html";
+
+    })
     .catch(err=>{
-        errorMsg.innerText = err.message;
+
+        if(err.code==="auth/user-not-found"){
+            msg.innerText="Bu mail ile kayıtlı hesap bulunamadı.";
+        }else if(err.code==="auth/wrong-password"){
+            msg.innerText="Şifre yanlış.";
+        }else{
+            msg.innerText=err.message;
+        }
+
     });
 
-};
+}
 
 
+/* REGISTER */
 
-// REGISTER
-registerBtn.onclick = ()=>{
+function register(){
 
-    const email = emailInput.value;
-    const pass = passInput.value;
+    let name = regName.value;
+    let email = regEmail.value;
+    let pass = regPass.value;
+
+    if(!name){
+        msg2.innerText="Kullanıcı adı giriniz.";
+        return;
+    }
 
     auth.createUserWithEmailAndPassword(email,pass)
+    .then(user=>{
+
+        return user.user.updateProfile({
+            displayName:name
+        });
+
+    })
+    .then(()=>{
+
+        alert("Kayıt başarılı!");
+        showLogin();
+
+    })
     .catch(err=>{
-        errorMsg.innerText = err.message;
+        msg2.innerText=err.message;
     });
 
-};
+}
 
 
+/* GOOGLE */
 
-// LOGOUT
-logoutBtn.onclick = ()=>{
+function googleLogin(){
 
-    auth.signOut();
+    const provider = new firebase.auth.GoogleAuthProvider();
 
-};
+    auth.signInWithPopup(provider)
+    .then(res=>{
+
+        let name = res.user.displayName;
+
+        localStorage.setItem("username",name);
+
+        window.location.href="home.html";
+
+    });
+
+}
 
 
+/* UI */
 
-// OTURUM KONTROL
+function showRegister(){
+    loginCard.classList.add("hidden");
+    registerCard.classList.remove("hidden");
+}
+
+function showLogin(){
+    registerCard.classList.add("hidden");
+    loginCard.classList.remove("hidden");
+}
+
+
+/* AUTO LOGIN */
+
 auth.onAuthStateChanged(user=>{
 
     if(user){
-
-        authPanel.style.display="none";
-        userPanel.style.display="block";
-
-        userName.innerText = user.displayName || "Kullanıcı";
-        userEmail.innerText = user.email;
-
-    }else{
-
-        authPanel.style.display="block";
-        userPanel.style.display="none";
-
-        emailInput.value="";
-        passInput.value="";
-        errorMsg.innerText="";
-
+        window.location.href="katagori.html";
     }
 
 });
@@ -383,6 +382,7 @@ auth.onAuthStateChanged(user=>{
 </script>
   </body>
 </html>
+
 
 
 
