@@ -437,8 +437,50 @@ function resetPass(){
 
 
 </script>
+    <script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDG61MR_F6TP50Wr40KG8tIP93f4y-wRmY",
+  authDomain: "sahinehliyet-app.firebaseapp.com",
+  projectId: "sahinehliyet-app",
+  storageBucket: "sahinehliyet-app.firebasestorage.app",
+  messagingSenderId: "234085464102",
+  appId: "1:234085464102:web:8e9761997fbeec319b8ee7",
+  measurementId: "G-QQZFK8EZD4"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+const nickText = document.getElementById("nicknameText");
+
+// 🔹 Kullanıcı giriş yapmış mı kontrol
+onAuthStateChanged(auth, (user) => {
+
+  if (user) {
+
+    // Firebase'teki kullanıcı adı
+    const name = user.displayName || "Kullanıcı";
+
+    nickText.textContent = name;
+
+  } else {
+
+    // Giriş yoksa login sayfasına at
+    location.href = "index.html";
+
+  }
+
+});
+
+</script>
+
   </body>
 </html>
+
 
 
 
